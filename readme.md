@@ -18,6 +18,7 @@ You can post fan-fiction and anime pictures.
 - Echo
 - Templ
 - HTMX
+- AlpineJS
 - Tailwind
 - Air
 - Bun DB

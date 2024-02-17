@@ -23,7 +23,7 @@ func PageLayout() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><title>My Page</title><script src=\"/dist/js/vendor/htmx.min.js\"></script></head><body>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><title>My Page</title><script src=\"/dist/js/vendor/htmx.min.js\"></script><script defer src=\"/dist/js/vendor/alpine.min.js\"></script></head><body>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
