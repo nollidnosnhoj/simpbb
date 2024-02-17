@@ -29,9 +29,6 @@ go.work
 # NPM
 node_modules
 
-# Assets
-assets/dist/css/styles.css
-
 # air
 tmp
 

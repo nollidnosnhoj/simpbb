@@ -1,7 +1,7 @@
 BINARY_NAME=simpbb
 MAIN_CMD_FILEPATH=./cmd/${BINARY_NAME}/main.go
 
-build: tailwind
+build:
 	GOARCH=amd64 GOOS=darwin go build -o ./bin/${BINARY_NAME}-darwin ${MAIN_CMD_FILEPATH}
 	GOARCH=amd64 GOOS=linux go build -o ./bin/${BINARY_NAME}-linux ${MAIN_CMD_FILEPATH}
 
