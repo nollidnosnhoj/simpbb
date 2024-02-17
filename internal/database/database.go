@@ -9,7 +9,7 @@ import (
 )
 
 func NewDb () *bun.DB {
-	sqldb, err := sql.Open(sqliteshim.ShimName, "./simpbb.db")
+	sqldb, err := sql.Open(sqliteshim.ShimName, "./simpbb.db")	// TODO: Use config to get database name/url
 	if err != nil {
 		panic(err)
 	}
