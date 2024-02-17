@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/nollidnosnhoj/simpbb/internal/migrations"
 	"github.com/urfave/cli/v2"
 )
 
@@ -18,6 +19,7 @@ func main() {
 	app.Description = description
 	app.Commands = []*cli.Command{
 		StartCommand,
+		GetDbCommand(migrations.Migrations),
 	}
 
 	if err := app.Run(os.Args); err != nil {

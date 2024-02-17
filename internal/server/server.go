@@ -12,9 +12,9 @@ import (
 )
 
 type Server struct {
-	log *log.Logger
-	echo *echo.Echo
-	db *bun.DB
+	Log *log.Logger
+	Echo *echo.Echo
+	Db *bun.DB
 }
 
 func NewServer() *Server {
@@ -34,8 +34,8 @@ func NewServer() *Server {
 	db := database.NewDb()
 
 	return &Server{
-		log: logger,
-		echo: e,
-		db: db,
+		Log: logger,
+		Echo: e,
+		Db: db,
 	}
 }

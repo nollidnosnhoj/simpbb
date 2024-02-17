@@ -9,7 +9,7 @@ import (
 )
 
 func NewDb () *bun.DB {
-	sqldb, err := sql.Open(sqliteshim.ShimName, "file::memory:?cache=shared")
+	sqldb, err := sql.Open(sqliteshim.ShimName, "./simpbb.db")
 	if err != nil {
 		panic(err)
 	}

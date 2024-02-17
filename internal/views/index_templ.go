@@ -11,7 +11,7 @@ import "io"
 import "bytes"
 
 import (
-	"github.com/nollidnosnhoj/simpbb/internal/components/partials"
+	"github.com/nollidnosnhoj/simpbb/internal/partials"
 )
 
 func IndexPage() templ.Component {

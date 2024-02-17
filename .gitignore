@@ -32,4 +32,7 @@ node_modules
 # air
 tmp
 
+# Sqlite
+*.db
+
 # End of https://www.toptal.com/developers/gitignore/api/go
