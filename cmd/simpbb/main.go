@@ -1,4 +1,4 @@
-package commands
+package main
 
 import (
 	"context"
@@ -8,16 +8,9 @@ import (
 	"syscall"
 
 	"github.com/nollidnosnhoj/simpbb/internal/server"
-	"github.com/urfave/cli/v2"
 )
 
-var StartCommand = &cli.Command{
-	Name: "start",
-	Usage: "Start the server",
-	Action: startAction,
-}
-
-func startAction(ctx *cli.Context) error {
+func main() {
 	cctx, cancel := context.WithCancel(context.Background())
 
 	// start server gorountine
@@ -34,8 +27,5 @@ func startAction(ctx *cli.Context) error {
 
 	if sig == syscall.SIGUSR1 {
 		os.Exit(1)
-		return nil
 	}
-
-	return nil
 }

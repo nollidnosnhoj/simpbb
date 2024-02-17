@@ -1,22 +1,22 @@
 BINARY_NAME=simpbb
-CMD_PATH=./cmd/${BINARY_NAME}/${BINARY_NAME}.go
+MAIN_CMD_FILEPATH=./cmd/${BINARY_NAME}/main.go
 
-build: generate-assets
-	GOARCH=amd64 GOOS=darwin go build -o ${BINARY_NAME}-darwin ${CMD_PATH}
-	GOARCH=amd64 GOOS=linux go build -o ${BINARY_NAME}-linux ${CMD_PATH}
+build: tailwind
+	GOARCH=amd64 GOOS=darwin go build -o ./bin/${BINARY_NAME}-darwin ${MAIN_CMD_FILEPATH}
+	GOARCH=amd64 GOOS=linux go build -o ./bin/${BINARY_NAME}-linux ${MAIN_CMD_FILEPATH}
 
 air:
 	air -c .air.toml
 
-generate-assets:
+tailwind:
 	npm install
-	go generate ./assets/embed.go
+	go generate ./assets/tailwind.go
 
-start: build
-	./${BINARY_NAME}-darwin start
+run: build
+	./${BINARY_NAME}-darwin
 
-start-linux: build
-	./${BINARY_NAME}-linux start
+run-linux: build
+	./${BINARY_NAME}-linux
 
 clean: 
 	go clean

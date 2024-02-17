@@ -6,5 +6,3 @@ import (
 
 //go:embed all:dist
 var Assets embed.FS
-
-//go:generate npm run build
