@@ -39,7 +39,7 @@ func GetDbCommand(migrations *migrate.Migrations) *cli.Command {
 						log.Println("No migrations to run")
 						return nil
 					}
-					log.Printf("Migrated to version %s", group.ID)
+					log.Printf("Migrated to version %d", group.ID)
 					return nil
 				},
 			},
@@ -58,7 +58,7 @@ func GetDbCommand(migrations *migrate.Migrations) *cli.Command {
 						log.Println("No migrations to rollback")
 						return nil
 					}
-					log.Printf("Rolled back to version %s", group.ID)
+					log.Printf("Rolled back to version %d", group.ID)
 					return nil
 				},
 			},
