@@ -1,10 +1,11 @@
 package partials
 
-templ PageLayout() {
+templ PageLayout(title string) {
 	<html>
 		<head>
-			<title>My Page</title>
+			<title>{ title }</title>
 			<script src="/dist/js/vendor/htmx.min.js"></script>
+			<script defer src="/dist/js/vendor/alpine-collapse.min.js"></script>
 			<script defer src="/dist/js/vendor/alpine.min.js"></script>
 		</head>
 		<body>
