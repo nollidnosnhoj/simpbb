@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/nollidnosnhoj/simpbb/internal/migrations"
 	"github.com/urfave/cli/v2"
 )
 
@@ -20,7 +19,7 @@ func main() {
 	app.Description = description
 	app.Commands = []*cli.Command{
 		StartCommand,
-		GetDbCommand(migrations.Migrations),
+		MigrateCommand,
 	}
 
 	if err := app.Run(os.Args); err != nil {
@@ -33,5 +32,4 @@ func init() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	
 }

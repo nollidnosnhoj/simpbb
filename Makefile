@@ -1,9 +1,10 @@
 BINARY_NAME=simpbb
-MAIN_CMD_FILEPATH=./cmd
+GOOSE_DRIVER=sqlite3
+GOOSE_DBSTRING=file:./simpbb.db
+GOOSE_MIGRATION_DIR=./internal/migrations
 
 build:
-	GOARCH=amd64 GOOS=darwin go build -o ./bin/${BINARY_NAME}-darwin ${MAIN_CMD_FILEPATH}
-	GOARCH=amd64 GOOS=linux go build -o ./bin/${BINARY_NAME}-linux ${MAIN_CMD_FILEPATH}
+	go build -o ./bin/${BINARY_NAME} ./cmd/
 
 air:
 	air -c .air.toml
@@ -11,13 +12,9 @@ air:
 	go generate ./assets/tailwind.go
 
 start: build
-	./bin/${BINARY_NAME}-darwin start
-
-start-linux: build
-	./bin/${BINARY_NAME}-linux start
+	./bin/${BINARY_NAME}
 
 clean: 
 	go clean
 	rm -rf node_modules
-	rm -f ./bin/${BINARY_NAME}-darwin
-	rm -f ./bin/${BINARY_NAME}-linux
+	rm -f ./bin/${BINARY_NAME}

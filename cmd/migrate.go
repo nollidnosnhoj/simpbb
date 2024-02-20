@@ -1,147 +1,88 @@
 package main
 
 import (
+	"database/sql"
 	"log"
-	"strings"
 
-	"github.com/nollidnosnhoj/simpbb/internal/database"
-	"github.com/uptrace/bun/migrate"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/sqlite3"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/urfave/cli/v2"
 )
 
-func GetDbCommand(migrations *migrate.Migrations) *cli.Command {
-	return &cli.Command{
-		Name: "migrate",
-		Usage: "Database migration commands",
-		Subcommands: []*cli.Command{
-			{
-				Name: "init",
-				Usage: "Create migration tables",
-				Action: func(ctx *cli.Context) error {
-					db := database.NewDb()
-					defer db.Close()
-					migrator := migrate.NewMigrator(db, migrations)
-					return migrator.Init(ctx.Context)
-				},
-			},
-			{
-				Name: "up",
-				Usage: "Run all pending migrations",
-				Action: func(ctx *cli.Context) error {
-					db := database.NewDb()
-					defer db.Close()
-					migrator := migrate.NewMigrator(db, migrations)
-					group, err := migrator.Migrate(ctx.Context)
-					if err != nil {
-						return err
-					}
-					if group.ID == 0 {
-						log.Println("No migrations to run")
-						return nil
-					}
-					log.Printf("Migrated to version %d", group.ID)
-					return nil
-				},
-			},
-			{
-				Name: "down",
-				Usage: "Rollback the last migration",
-				Action: func(ctx *cli.Context) error {
-					db := database.NewDb()
-					defer db.Close()
-					migrator := migrate.NewMigrator(db, migrations)
-					group, err := migrator.Rollback(ctx.Context)
-					if err != nil {
-						return err
-					}
-					if group.ID == 0 {
-						log.Println("No migrations to rollback")
-						return nil
-					}
-					log.Printf("Rolled back to version %d", group.ID)
-					return nil
-				},
-			},
-			{
-				Name: "lock",
-				Usage: "Lock migration",
-				Action: func(ctx *cli.Context) error {
-					db := database.NewDb()
-					defer db.Close()
-					migrator := migrate.NewMigrator(db, migrations)
-					return migrator.Lock(ctx.Context)
-				},
-			},
-			{
-				Name: "unlock",
-				Usage: "Unlock migration",
-				Action: func(ctx *cli.Context) error {
-					db := database.NewDb()
-					defer db.Close()
-					migrator := migrate.NewMigrator(db, migrations)
-					return migrator.Unlock(ctx.Context)
-				},
-			},
-			{
-				Name: "status",
-				Usage: "Show migration status",
-				Action: func(ctx *cli.Context) error {
-					db := database.NewDb()
-					defer db.Close()
-					migrator := migrate.NewMigrator(db, migrations)
-					ms, err := migrator.MigrationsWithStatus(ctx.Context)
-					if err != nil {
-						return err
-					}
-					log.Printf("migrations: %s\n", ms)
-					log.Printf("unapplied migrations: %s\n", ms.Unapplied())
-					log.Printf("last migration group: %s\n", ms.LastGroup())
-
-					return nil
-				},
-			},
-			{
-				Name: "create",
-				Usage: "Create a new migration",
-				Action: func(ctx *cli.Context) error {
-					db := database.NewDb()
-					defer db.Close()
-					migrator := migrate.NewMigrator(db, migrations)
-					name := strings.Join(ctx.Args().Slice(), "_")
-					files, err := migrator.CreateSQLMigrations(ctx.Context, name)
-					if err != nil {
-						return err
-					}
-
-					for _, mf := range files {
-						log.Printf("created migration %s (%s)\n", mf.Name, mf.Path)
-					}
-
-					return nil
-				},
-			},
-			{
-				Name:  "mark_applied",
-				Usage: "mark migrations as applied without actually running them",
-				Action: func(ctx *cli.Context) error {
-					db := database.NewDb()
-					defer db.Close()
-					migrator := migrate.NewMigrator(db, migrations)
-
-					group, err := migrator.Migrate(ctx.Context, migrate.WithNopMigration())
-					if err != nil {
-						return err
-					}
-
-					if group.ID == 0 {
-						log.Printf("there are no new migrations to mark as applied\n")
-						return nil
-					}
-
-					log.Printf("marked as applied %s\n", group)
-					return nil
-				},
-			},
+var MigrateCommand = &cli.Command{
+	Name: "migrate",
+	Usage: "migrate the database",
+	Subcommands: []*cli.Command{
+		{
+			Name: "up",
+			Usage: "migrate the database up",
+			Action: upMigration,
 		},
+		{
+			Name: "down",
+			Usage: "migrate the database down",
+			Action: downMigration,
+		},
+	},
+}
+
+func upMigration(c *cli.Context) error {
+	m, err := getMigrator()
+	if err != nil {
+		return err
 	}
+	defer func () {
+		err1, err2 := m.Close()
+		if err1 != nil {
+			log.Fatal(err1)
+		}
+		if err2 != nil {
+			log.Fatal(err2)
+		}
+	}()
+	if err := m.Up(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func downMigration(c *cli.Context) error {
+	m, err := getMigrator()
+	if err != nil {
+		return err
+	}
+	defer func () {
+		err1, err2 := m.Close()
+		if err1 != nil {
+			log.Fatal(err1)
+		}
+		if err2 != nil {
+			log.Fatal(err2)
+		}
+	}()
+	if err := m.Down(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func getMigrator() (*migrate.Migrate, error) {
+	db, err := sql.Open("sqlite3", "file:simpbb.db")
+	if err != nil {
+		return nil, err
+	}
+	driver, driverErr := sqlite3.WithInstance(db, &sqlite3.Config{})
+	if driverErr != nil {
+		return nil, driverErr
+	}
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://internal/migrations",
+		"sqlite3",
+		driver,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
 }
