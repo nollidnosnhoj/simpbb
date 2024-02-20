@@ -23,11 +23,10 @@ You can post fan-fiction and anime pictures.
 - Air
 - Bun DB
 - Sqlite
-- Air
 
 ## Models
 
-i don't know yet lol
+look at schema.sql
 
 ## Documentation
 
