@@ -18,3 +18,9 @@ clean:
 	go clean
 	rm -rf node_modules
 	rm -f ./bin/${BINARY_NAME}
+
+migrate-up:
+	go run ./cmd migrate up
+
+migrate-down:
+	go run ./cmd migrate down
